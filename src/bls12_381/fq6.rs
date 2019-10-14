@@ -12,18 +12,8 @@ pub struct Fq6 {
 }
 
 impl ::std::fmt::Display for Fq6 {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter) -> ::std::fmt::Result {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
         write!(f, "Fq6({} + {} * v, {} * v^2)", self.c0, self.c1, self.c2)
-    }
-}
-
-impl Rand for Fq6 {
-    fn rand<R: Rng>(rng: &mut R) -> Self {
-        Fq6 {
-            c0: rng.gen(),
-            c1: rng.gen(),
-            c2: rng.gen(),
-        }
     }
 }
 
@@ -106,6 +96,16 @@ impl Fq6 {
         self.c0 = t1;
         self.c1 = t2;
         self.c2 = t3;
+    }
+}
+
+impl Rand for Fq6 {
+    fn rand<R: Rng>(rng: &mut R) -> Self {
+        Fq6 {
+            c0: Fq2::rand(rng),
+            c1: Fq2::rand(rng),
+            c2: Fq2::rand(rng),
+        }
     }
 }
 
@@ -336,7 +336,7 @@ fn test_fq6_mul_by_1() {
         a.mul_by_1(&c1);
         b.mul_assign(&Fq6 {
             c0: Fq2::zero(),
-            c1: c1,
+            c1,
             c2: Fq2::zero(),
         });
 
@@ -356,8 +356,8 @@ fn test_fq6_mul_by_01() {
 
         a.mul_by_01(&c0, &c1);
         b.mul_assign(&Fq6 {
-            c0: c0,
-            c1: c1,
+            c0,
+            c1,
             c2: Fq2::zero(),
         });
 
@@ -369,6 +369,6 @@ fn test_fq6_mul_by_01() {
 fn fq6_field_tests() {
     use ff::PrimeField;
 
-    crate::tests::field::random_field_tests::<Fq6>();
-    crate::tests::field::random_frobenius_tests::<Fq6, _>(super::fq::Fq::char(), 13);
+    crate::tests::field::rand_field_tests::<Fq6>();
+    crate::tests::field::rand_frobenius_tests::<Fq6, _>(super::fq::Fq::char(), 13);
 }

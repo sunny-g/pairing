@@ -1,3 +1,5 @@
+//! A library for working with pairing-friendly curves.
+
 // `clippy` is a code linting tool for improving code quality by catching
 // common mistakes or strange code patterns. If the `cargo-clippy` feature
 // is provided, all compiler warnings are prohibited.
@@ -8,6 +10,8 @@
 // #![cfg_attr(feature = "cargo-clippy", allow(many_single_char_names))]
 // #![cfg_attr(feature = "cargo-clippy", allow(new_without_default_derive))]
 // #![cfg_attr(feature = "cargo-clippy", allow(write_literal))]
+// // Catch documentation errors caused by code changes.
+// #![deny(intra_doc_link_resolution_failure)]
 // Force public structures to implement Debug
 #![deny(missing_debug_implementations)]
 
@@ -41,8 +45,7 @@ pub trait Engine: ScalarEngine {
             Base = Self::Fq,
             Scalar = Self::Fr,
             Affine = Self::G1Affine,
-        >
-        + From<Self::G1Affine>;
+        > + From<Self::G1Affine>;
 
     /// The affine representation of an element in G1.
     type G1Affine: CurveAffine<
@@ -61,8 +64,7 @@ pub trait Engine: ScalarEngine {
             Base = Self::Fqe,
             Scalar = Self::Fr,
             Affine = Self::G2Affine,
-        >
-        + From<Self::G2Affine>;
+        > + From<Self::G2Affine>;
 
     /// The affine representation of an element in G2.
     type G2Affine: CurveAffine<
@@ -72,8 +74,7 @@ pub trait Engine: ScalarEngine {
             Projective = Self::G2,
             Pair = Self::G1Affine,
             PairingResult = Self::Fqk,
-        >
-        + From<Self::G2>;
+        > + From<Self::G2>;
 
     /// The base field that hosts G1.
     type Fq: PrimeField + SqrtField;
@@ -95,7 +96,7 @@ pub trait Engine: ScalarEngine {
         >;
 
     /// Perform final exponentiation of the result of a miller loop.
-    fn final_exponentiation(r: &Self::Fqk) -> Option<Self::Fqk>;
+    fn final_exponentiation(_: &Self::Fqk) -> Option<Self::Fqk>;
 
     /// Performs a complete pairing operation `(p, q)`.
     fn pairing<G1, G2>(p: G1, q: G2) -> Self::Fqk
@@ -104,8 +105,9 @@ pub trait Engine: ScalarEngine {
         G2: Into<Self::G2Affine>,
     {
         Self::final_exponentiation(&Self::miller_loop(
-            [(&(p.into().prepare()), &(q.into().prepare()))].into_iter(),
-        )).unwrap()
+            [(&(p.into().prepare()), &(q.into().prepare()))].iter(),
+        ))
+        .unwrap()
     }
 }
 

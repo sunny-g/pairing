@@ -12,13 +12,15 @@ Bring the `pairing` crate into your project just as you normally would.
 
 ## Security Warnings
 
-This library does not make any guarantees about constant-time operations, memory access patterns, or resistance to side-channel attacks.
+This library does not make any guarantees about constant-time operations, memory
+access patterns, or resistance to side-channel attacks.
 
 ## License
 
 Licensed under either of
 
- * Apache License, Version 2.0, ([LICENSE-APACHE](LICENSE-APACHE) or http://www.apache.org/licenses/LICENSE-2.0)
+ * Apache License, Version 2.0, ([LICENSE-APACHE](LICENSE-APACHE) or
+   http://www.apache.org/licenses/LICENSE-2.0)
  * MIT license ([LICENSE-MIT](LICENSE-MIT) or http://opensource.org/licenses/MIT)
 
 at your option.

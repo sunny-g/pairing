@@ -216,6 +216,6 @@ fn test_squaring() {
 fn fq12_field_tests() {
     use ff::PrimeField;
 
-    crate::tests::field::random_field_tests::<Fq12>();
-    crate::tests::field::random_frobenius_tests::<Fq12, _>(super::fq::Fq::char(), 13);
+    crate::tests::field::rand_field_tests::<Fq12>();
+    crate::tests::field::rand_frobenius_tests::<Fq12, _>(super::fq::Fq::char(), 13);
 }

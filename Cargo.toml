@@ -2,26 +2,36 @@
 name = "pairing_ce"
 
 # Remember to change version string in README.md.
-version = "0.19.0"
+version = "0.20.0"
 authors = [
     "Sean Bowe <ewillbefull@gmail.com>",
     "Jack Grigg <jack@z.cash>",
     "Alex Vlasov <alex.m.vlasov@gmail.com>",
     "Alex Gluchowski <alex@gluchowski.net>"
 ]
+readme = "README.md"
 license = "MIT/Apache-2.0"
 
 description = "Pairing-friendly elliptic curve library"
-documentation = "https://docs.rs/pairing/"
+documentation = "https://docs.rs/pairing_ce/"
 homepage = "https://github.com/matter-labs/pairing"
 repository = "https://github.com/matter-labs/pairing"
 edition = "2018"
 
+exclude = [
+    "benches",
+    "src/tests",
+    "bls12_381/tests"
+]
+
 [dependencies]
-rand = "0.4"
 byteorder = "1"
-ff = {package = "ff_ce", version = "0.8", features = ["derive"]}
+rand = "0.4"
+ff = {package = "ff_ce", git = "https://github.com/matter-labs/ff", branch = "upstreamUpdate", version = "0.9", features = ["derive"]}
 # ff = { path = '../ff', package = "ff_ce", features = ["derive"]}
 
 [features]
 default = []
+
+[badges]
+maintenance = { status = "actively-developed" }

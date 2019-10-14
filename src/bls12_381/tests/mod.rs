@@ -1,3 +1,6 @@
+use ff::PrimeFieldRepr;
+use crate::{CurveAffine, CurveProjective, EncodedPoint, GroupDecodingError};
+
 use super::*;
 use crate::*;
 

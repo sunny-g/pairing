@@ -549,6 +549,23 @@ macro_rules! curve_impl {
             }
         }
 
+        // impl Rand for $projective {
+        //     fn rand<R: Rng>(rng: &mut R) -> Self {
+        //         loop {
+        //             let x = $basefield::rand(rng);
+        //             let greatest = rng.next_u32() % 2 != 0;
+
+        //             if let Some(p) = $affine::get_point_from_x(x, greatest) {
+        //                 let p = p.scale_by_cofactor();
+
+        //                 if !p.is_zero() {
+        //                     return p;
+        //                 }
+        //             }
+        //         }
+        //     }
+        // }
+
         // The affine point X, Y is represented in the jacobian
         // coordinates with Z = 1.
         impl From<$affine> for $projective {
@@ -1038,7 +1055,7 @@ pub mod g1 {
     #[test]
     fn g1_curve_tests() {
         crate::tests::curve::curve_tests::<G1>();
-        crate::tests::curve::random_transformation_tests::<G1>();
+        crate::tests::curve::rand_transformation_tests::<G1>();
     }
 }
 
@@ -1393,9 +1410,9 @@ pub mod g2 {
         pub(crate) infinity: bool,
     }
 
-    // This generator does not take a random element in Fp2
+    // This generator does not take a rand element in Fp2
     // and tries to increment it to be on a curve, but
-    // generates a random scalar and multiplies predefined generator by it
+    // generates a rand scalar and multiplies predefined generator by it
 
     #[test]
     fn g2_generator() {
@@ -1515,7 +1532,7 @@ pub mod g2 {
     #[test]
     fn g2_curve_tests() {
         crate::tests::curve::curve_tests::<G2>();
-        crate::tests::curve::random_transformation_tests::<G2>();
+        crate::tests::curve::rand_transformation_tests::<G2>();
     }
 
     #[test]
@@ -1633,7 +1650,7 @@ pub mod g2 {
     }
 
     #[test]
-    fn random_negation_tests() {
+    fn rand_negation_tests() {
         let mut rng = XorShiftRng::from_seed([0x5dbe6259, 0x8d313d76, 0x3237db17, 0xe5bc0654]);
 
         for _ in 0..1000 {

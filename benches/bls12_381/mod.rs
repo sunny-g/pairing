@@ -4,10 +4,12 @@ mod fq12;
 mod fq2;
 mod fr;
 
-use rand::{Rand, SeedableRng, XorShiftRng};
+use rand::SeedableRng;
+use rand::XorShiftRng;
 
+use group::CurveProjective;
 use pairing::bls12_381::*;
-use pairing::{CurveAffine, Engine};
+use pairing::{Engine, PairingCurveAffine};
 
 #[bench]
 fn bench_pairing_g1_preparation(b: &mut ::test::Bencher) {

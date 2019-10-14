@@ -545,7 +545,7 @@ fn test_fq_sqrt() {
     }
 
     for _ in 0..1000 {
-        // Ensure sqrt(a)^2 = a for random a
+        // Ensure sqrt(a)^2 = a for rand a
         let a = Fq::rand(&mut rng);
 
         if let Some(mut tmp) = a.sqrt() {
@@ -572,8 +572,8 @@ fn test_fq_sqrt_2() {
 
 #[test]
 fn fq_field_tests() {
-    crate::tests::field::random_field_tests::<Fq>();
-    crate::tests::field::random_sqrt_tests::<Fq>();
-    crate::tests::field::random_frobenius_tests::<Fq, _>(Fq::char(), 13);
+    crate::tests::field::rand_field_tests::<Fq>();
+    crate::tests::field::rand_sqrt_tests::<Fq>();
+    crate::tests::field::rand_frobenius_tests::<Fq, _>(Fq::char(), 13);
     crate::tests::field::from_str_tests::<Fq>();
 }

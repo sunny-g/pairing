@@ -556,7 +556,7 @@ fn test_pairing() {
 }
 
 #[test]
-fn random_bilinearity_tests() {
+fn rand_bilinearity_tests() {
     use crate::{CurveProjective};
     use ff::PrimeField;
 

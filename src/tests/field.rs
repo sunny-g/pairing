@@ -1,7 +1,7 @@
 use ff::{Field, LegendreSymbol, PrimeField, SqrtField};
-use rand::{Rng, SeedableRng, XorShiftRng};
+use rand::{Rand, Rng, SeedableRng, XorShiftRng};
 
-pub fn random_frobenius_tests<F: Field, C: AsRef<[u64]>>(characteristic: C, maxpower: usize) {
+pub fn rand_frobenius_tests<F: Field, C: AsRef<[u64]>>(characteristic: C, maxpower: usize) {
     let mut rng = XorShiftRng::from_seed([0x5dbe6259, 0x8d313d76, 0x3237db17, 0xe5bc0654]);
 
     for _ in 0..100 {
@@ -19,7 +19,7 @@ pub fn random_frobenius_tests<F: Field, C: AsRef<[u64]>>(characteristic: C, maxp
     }
 }
 
-pub fn random_sqrt_tests<F: SqrtField>() {
+pub fn rand_sqrt_tests<F: SqrtField>() {
     let mut rng = XorShiftRng::from_seed([0x5dbe6259, 0x8d313d76, 0x3237db17, 0xe5bc0654]);
 
     for _ in 0..10000 {
@@ -53,17 +53,17 @@ pub fn random_sqrt_tests<F: SqrtField>() {
     }
 }
 
-pub fn random_field_tests<F: Field>() {
+pub fn rand_field_tests<F: Field>() {
     let mut rng = XorShiftRng::from_seed([0x5dbe6259, 0x8d313d76, 0x3237db17, 0xe5bc0654]);
 
-    random_multiplication_tests::<F, _>(&mut rng);
-    random_addition_tests::<F, _>(&mut rng);
-    random_subtraction_tests::<F, _>(&mut rng);
-    random_negation_tests::<F, _>(&mut rng);
-    random_doubling_tests::<F, _>(&mut rng);
-    random_squaring_tests::<F, _>(&mut rng);
-    random_inversion_tests::<F, _>(&mut rng);
-    random_expansion_tests::<F, _>(&mut rng);
+    rand_multiplication_tests::<F, _>(&mut rng);
+    rand_addition_tests::<F, _>(&mut rng);
+    rand_subtraction_tests::<F, _>(&mut rng);
+    rand_negation_tests::<F, _>(&mut rng);
+    rand_doubling_tests::<F, _>(&mut rng);
+    rand_squaring_tests::<F, _>(&mut rng);
+    rand_inversion_tests::<F, _>(&mut rng);
+    rand_expansion_tests::<F, _>(&mut rng);
 
     assert!(F::zero().is_zero());
     {
@@ -109,7 +109,7 @@ pub fn from_str_tests<F: PrimeField>() {
         let mut rng = XorShiftRng::from_seed([0x5dbe6259, 0x8d313d76, 0x3237db17, 0xe5bc0654]);
 
         for _ in 0..1000 {
-            let n: u64 = rng.gen();
+            let n = rng.next_u64();
 
             let a = F::from_str(&format!("{}", n)).unwrap();
             let b = F::from_repr(n.into()).unwrap();
@@ -124,7 +124,7 @@ pub fn from_str_tests<F: PrimeField>() {
     assert!(F::from_str("00000000000").is_none());
 }
 
-fn random_multiplication_tests<F: Field, R: Rng>(rng: &mut R) {
+fn rand_multiplication_tests<F: Field, R: Rng>(rng: &mut R) {
     for _ in 0..10000 {
         let a = F::rand(rng);
         let b = F::rand(rng);
@@ -147,7 +147,7 @@ fn random_multiplication_tests<F: Field, R: Rng>(rng: &mut R) {
     }
 }
 
-fn random_addition_tests<F: Field, R: Rng>(rng: &mut R) {
+fn rand_addition_tests<F: Field, R: Rng>(rng: &mut R) {
     for _ in 0..10000 {
         let a = F::rand(rng);
         let b = F::rand(rng);
@@ -170,10 +170,10 @@ fn random_addition_tests<F: Field, R: Rng>(rng: &mut R) {
     }
 }
 
-fn random_subtraction_tests<F: Field, R: Rng>(rng: &mut R) {
+fn rand_subtraction_tests<F: Field, R: Rng>(rng: &mut R) {
     for _ in 0..10000 {
-        let a = F::rand(rng);
         let b = F::rand(rng);
+        let a = F::rand(rng);
 
         let mut t0 = a; // (a - b)
         t0.sub_assign(&b);
@@ -188,7 +188,7 @@ fn random_subtraction_tests<F: Field, R: Rng>(rng: &mut R) {
     }
 }
 
-fn random_negation_tests<F: Field, R: Rng>(rng: &mut R) {
+fn rand_negation_tests<F: Field, R: Rng>(rng: &mut R) {
     for _ in 0..10000 {
         let a = F::rand(rng);
         let mut b = a;
@@ -199,7 +199,7 @@ fn random_negation_tests<F: Field, R: Rng>(rng: &mut R) {
     }
 }
 
-fn random_doubling_tests<F: Field, R: Rng>(rng: &mut R) {
+fn rand_doubling_tests<F: Field, R: Rng>(rng: &mut R) {
     for _ in 0..10000 {
         let mut a = F::rand(rng);
         let mut b = a;
@@ -210,7 +210,7 @@ fn random_doubling_tests<F: Field, R: Rng>(rng: &mut R) {
     }
 }
 
-fn random_squaring_tests<F: Field, R: Rng>(rng: &mut R) {
+fn rand_squaring_tests<F: Field, R: Rng>(rng: &mut R) {
     for _ in 0..10000 {
         let mut a = F::rand(rng);
         let mut b = a;
@@ -221,7 +221,7 @@ fn random_squaring_tests<F: Field, R: Rng>(rng: &mut R) {
     }
 }
 
-fn random_inversion_tests<F: Field, R: Rng>(rng: &mut R) {
+fn rand_inversion_tests<F: Field, R: Rng>(rng: &mut R) {
     assert!(F::zero().inverse().is_none());
 
     for _ in 0..10000 {
@@ -233,7 +233,7 @@ fn random_inversion_tests<F: Field, R: Rng>(rng: &mut R) {
     }
 }
 
-fn random_expansion_tests<F: Field, R: Rng>(rng: &mut R) {
+fn rand_expansion_tests<F: Field, R: Rng>(rng: &mut R) {
     for _ in 0..10000 {
         // Compare (a + b)(c + d) and (a*c + b*c + a*d + b*d)
 

@@ -1,4 +1,5 @@
-use rand::{Rand, SeedableRng, XorShiftRng};
+use rand::SeedableRng;
+use rand::XorShiftRng;
 
 use ff::{Field, PrimeField, PrimeFieldRepr, SqrtField};
 use pairing::bls12_381::*;
@@ -11,8 +12,8 @@ fn bench_fq_repr_add_nocarry(b: &mut ::test::Bencher) {
 
     let v: Vec<(FqRepr, FqRepr)> = (0..SAMPLES)
         .map(|_| {
-            let mut tmp1 = FqRepr::rand(&mut rng);
-            let mut tmp2 = FqRepr::rand(&mut rng);
+            let mut tmp1 = Fq::rand(&mut rng).into_repr();
+            let mut tmp2 = Fq::rand(&mut rng).into_repr();
             // Shave a few bits off to avoid overflow.
             for _ in 0..3 {
                 tmp1.div2();
@@ -39,7 +40,7 @@ fn bench_fq_repr_sub_noborrow(b: &mut ::test::Bencher) {
 
     let v: Vec<(FqRepr, FqRepr)> = (0..SAMPLES)
         .map(|_| {
-            let tmp1 = FqRepr::rand(&mut rng);
+            let tmp1 = Fq::rand(&mut rng).into_repr();
             let mut tmp2 = tmp1;
             // Ensure tmp2 is smaller than tmp1.
             for _ in 0..10 {
@@ -64,7 +65,9 @@ fn bench_fq_repr_num_bits(b: &mut ::test::Bencher) {
 
     let mut rng = XorShiftRng::from_seed([0x5dbe6259, 0x8d313d76, 0x3237db17, 0xe5bc0654]);
 
-    let v: Vec<FqRepr> = (0..SAMPLES).map(|_| FqRepr::rand(&mut rng)).collect();
+    let v: Vec<FqRepr> = (0..SAMPLES)
+        .map(|_| Fq::rand(&mut rng).into_repr())
+        .collect();
 
     let mut count = 0;
     b.iter(|| {
@@ -80,7 +83,9 @@ fn bench_fq_repr_mul2(b: &mut ::test::Bencher) {
 
     let mut rng = XorShiftRng::from_seed([0x5dbe6259, 0x8d313d76, 0x3237db17, 0xe5bc0654]);
 
-    let v: Vec<FqRepr> = (0..SAMPLES).map(|_| FqRepr::rand(&mut rng)).collect();
+    let v: Vec<FqRepr> = (0..SAMPLES)
+        .map(|_| Fq::rand(&mut rng).into_repr())
+        .collect();
 
     let mut count = 0;
     b.iter(|| {
@@ -97,7 +102,9 @@ fn bench_fq_repr_div2(b: &mut ::test::Bencher) {
 
     let mut rng = XorShiftRng::from_seed([0x5dbe6259, 0x8d313d76, 0x3237db17, 0xe5bc0654]);
 
-    let v: Vec<FqRepr> = (0..SAMPLES).map(|_| FqRepr::rand(&mut rng)).collect();
+    let v: Vec<FqRepr> = (0..SAMPLES)
+        .map(|_| Fq::rand(&mut rng).into_repr())
+        .collect();
 
     let mut count = 0;
     b.iter(|| {

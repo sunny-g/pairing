@@ -12,7 +12,7 @@ pub struct Fq12 {
 }
 
 impl ::std::fmt::Display for Fq12 {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter) -> ::std::fmt::Result {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
         write!(f, "Fq12({} + {} * w)", self.c0, self.c1)
     }
 }
@@ -20,8 +20,8 @@ impl ::std::fmt::Display for Fq12 {
 impl Rand for Fq12 {
     fn rand<R: Rng>(rng: &mut R) -> Self {
         Fq12 {
-            c0: rng.gen(),
-            c1: rng.gen(),
+            c0: Fq6::rand(rng),
+            c1: Fq6::rand(rng),
         }
     }
 }
@@ -165,8 +165,8 @@ fn test_fq12_mul_by_014() {
         a.mul_by_014(&c0, &c1, &c5);
         b.mul_assign(&Fq12 {
             c0: Fq6 {
-                c0: c0,
-                c1: c1,
+                c0,
+                c1,
                 c2: Fq2::zero(),
             },
             c1: Fq6 {
@@ -184,6 +184,6 @@ fn test_fq12_mul_by_014() {
 fn fq12_field_tests() {
     use ff::PrimeField;
 
-    crate::tests::field::random_field_tests::<Fq12>();
-    crate::tests::field::random_frobenius_tests::<Fq12, _>(super::fq::Fq::char(), 13);
+    crate::tests::field::rand_field_tests::<Fq12>();
+    crate::tests::field::rand_frobenius_tests::<Fq12, _>(super::fq::Fq::char(), 13);
 }
