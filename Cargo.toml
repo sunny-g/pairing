@@ -27,7 +27,7 @@ exclude = [
 [dependencies]
 byteorder = "1"
 rand = "0.4"
-ff = {package = "ff_ce", git = "https://github.com/matter-labs/ff", branch = "upstreamUpdate", version = "0.9", features = ["derive"]}
+ff = {package = "ff_ce", version = "0.8", features = ["derive"]}
 # ff = { path = '../ff', package = "ff_ce", features = ["derive"]}
 
 [features]
