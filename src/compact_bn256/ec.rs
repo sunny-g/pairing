@@ -16,8 +16,7 @@ macro_rules! curve_impl {
             pub(crate) y: $basefield,
         }
 
-        impl ::std::fmt::Display for $affine
-        {
+        impl ::std::fmt::Display for $affine {
             fn fmt(&self, f: &mut ::std::fmt::Formatter) -> ::std::fmt::Result {
                 if self.x.is_zero() && self.y.is_zero() {
                     write!(f, "{}(Infinity)", $name)
@@ -29,13 +28,12 @@ macro_rules! curve_impl {
 
         #[derive(Copy, Clone, Debug, Eq)]
         pub struct $projective {
-           pub(crate) x: $basefield,
-           pub(crate) y: $basefield,
-           pub(crate) z: $basefield
+            pub(crate) x: $basefield,
+            pub(crate) y: $basefield,
+            pub(crate) z: $basefield,
         }
 
-        impl ::std::fmt::Display for $projective
-        {
+        impl ::std::fmt::Display for $projective {
             fn fmt(&self, f: &mut ::std::fmt::Formatter) -> ::std::fmt::Result {
                 write!(f, "{}", self.into_affine())
             }
@@ -88,7 +86,9 @@ macro_rules! curve_impl {
                 let mut res = $projective::zero();
                 for i in bits {
                     res.double();
-                    if i { res.add_assign_mixed(self) }
+                    if i {
+                        res.add_assign_mixed(self)
+                    }
                 }
                 res
             }
@@ -111,11 +111,7 @@ macro_rules! curve_impl {
 
                     $affine {
                         x: x,
-                        y: if (y < negy) ^ greatest {
-                            y
-                        } else {
-                            negy
-                        },
+                        y: if (y < negy) ^ greatest { y } else { negy },
                     }
                 })
             }
@@ -136,7 +132,6 @@ macro_rules! curve_impl {
                     y2 == x3b
                 }
             }
-
         }
 
         impl CurveAffine for $affine {
@@ -192,7 +187,7 @@ macro_rules! curve_impl {
             fn as_xy(&self) -> (&Self::Base, &Self::Base) {
                 (&self.x, &self.y)
             }
-            
+
             #[inline(always)]
             fn into_xy_unchecked(&self) -> (Self::Base, Self::Base) {
                 (self.x, self.y)
@@ -200,17 +195,11 @@ macro_rules! curve_impl {
 
             #[inline(always)]
             fn from_xy_unchecked(x: Self::Base, y: Self::Base) -> Self {
-                Self {
-                    x: x,
-                    y: y,
-                }
+                Self { x: x, y: y }
             }
 
             fn from_xy_checked(x: Self::Base, y: Self::Base) -> Result<Self, GroupDecodingError> {
-                let affine = Self {
-                    x: x,
-                    y: y,
-                };
+                let affine = Self { x: x, y: y };
 
                 if !affine.is_on_curve() {
                     Err(GroupDecodingError::NotOnCurve)
@@ -219,7 +208,7 @@ macro_rules! curve_impl {
                 }
             }
         }
-       
+
         impl CurveProjective for $projective {
             type Engine = Bn256;
             type Scalar = $scalarfield;
@@ -232,7 +221,7 @@ macro_rules! curve_impl {
                 $projective {
                     x: $basefield::zero(),
                     y: $basefield::one(),
-                    z: $basefield::zero()
+                    z: $basefield::zero(),
                 }
             }
 
@@ -250,8 +239,7 @@ macro_rules! curve_impl {
                 self.is_zero() || self.z == $basefield::one()
             }
 
-            fn batch_normalization(v: &mut [Self])
-            {
+            fn batch_normalization(v: &mut [Self]) {
                 // Montgomery’s Trick and Fast Implementation of Masked AES
                 // Genelle, Prouff and Quisquater
                 // Section 3.2
@@ -259,9 +247,10 @@ macro_rules! curve_impl {
                 // First pass: compute [a, ab, abc, ...]
                 let mut prod = Vec::with_capacity(v.len());
                 let mut tmp = $basefield::one();
-                for g in v.iter_mut()
-                          // Ignore normalized elements
-                          .filter(|g| !g.is_normalized())
+                for g in v
+                    .iter_mut()
+                    // Ignore normalized elements
+                    .filter(|g| !g.is_normalized())
                 {
                     tmp.mul_assign(&g.z);
                     prod.push(tmp);
@@ -271,13 +260,19 @@ macro_rules! curve_impl {
                 tmp = tmp.inverse().unwrap(); // Guaranteed to be nonzero.
 
                 // Second pass: iterate backwards to compute inverses
-                for (g, s) in v.iter_mut()
-                               // Backwards
-                               .rev()
-                               // Ignore normalized elements
-                               .filter(|g| !g.is_normalized())
-                               // Backwards, skip last element, fill in one for last term.
-                               .zip(prod.into_iter().rev().skip(1).chain(Some($basefield::one())))
+                for (g, s) in v
+                    .iter_mut()
+                    // Backwards
+                    .rev()
+                    // Ignore normalized elements
+                    .filter(|g| !g.is_normalized())
+                    // Backwards, skip last element, fill in one for last term.
+                    .zip(
+                        prod.into_iter()
+                            .rev()
+                            .skip(1)
+                            .chain(Some($basefield::one())),
+                    )
                 {
                     // tmp := tmp * g.z; g.z := tmp * s = 1/z
                     let mut newtmp = tmp;
@@ -288,9 +283,7 @@ macro_rules! curve_impl {
                 }
 
                 // Perform affine transformations
-                for g in v.iter_mut()
-                          .filter(|g| !g.is_normalized())
-                {
+                for g in v.iter_mut().filter(|g| !g.is_normalized()) {
                     let mut z = g.z; // 1/z
                     z.square(); // 1/z^2
                     g.x.mul_assign(&z); // x/z^2
@@ -548,8 +541,7 @@ macro_rules! curve_impl {
 
                 let mut found_one = false;
 
-                for i in BitIterator::new(other.into())
-                {
+                for i in BitIterator::new(other.into()) {
                     if found_one {
                         res.double();
                     } else {
@@ -587,7 +579,7 @@ macro_rules! curve_impl {
                     $projective {
                         x: p.x,
                         y: p.y,
-                        z: $basefield::one()
+                        z: $basefield::one(),
                     }
                 }
             }
@@ -601,10 +593,7 @@ macro_rules! curve_impl {
                     $affine::zero()
                 } else if p.z == $basefield::one() {
                     // If Z is one, the point is already normalized.
-                    $affine {
-                        x: p.x,
-                        y: p.y,
-                    }
+                    $affine { x: p.x, y: p.y }
                 } else {
                     // Z is nonzero, so it must have an inverse in a field.
                     let zinv = p.z.inverse().unwrap();
@@ -620,23 +609,22 @@ macro_rules! curve_impl {
                     zinv_powered.mul_assign(&zinv);
                     y.mul_assign(&zinv_powered);
 
-                    $affine {
-                        x: x,
-                        y: y,
-                    }
+                    $affine { x: x, y: y }
                 }
             }
         }
-    }
+    };
 }
 
 pub mod g1 {
     use super::super::{Bn256, Fq, Fq12, FqRepr, Fr, FrRepr};
     use super::g2::G2Affine;
+    use crate::{
+        CurveAffine, CurveProjective, EncodedPoint, Engine, GroupDecodingError, RawEncodable,
+    };
     use ff::{BitIterator, Field, PrimeField, PrimeFieldRepr, SqrtField};
     use rand::{Rand, Rng};
     use std::fmt;
-    use crate::{RawEncodable, CurveAffine, CurveProjective, EncodedPoint, Engine, GroupDecodingError};
 
     curve_impl!(
         "G1",
@@ -665,8 +653,8 @@ pub mod g1 {
 
         /// Creates a point from raw encoded coordinates without checking on curve
         fn from_raw_uncompressed_le_unchecked(
-            encoded: &Self::Uncompressed, 
-            _infinity: bool
+            encoded: &Self::Uncompressed,
+            _infinity: bool,
         ) -> Result<Self, GroupDecodingError> {
             let copy = encoded.0;
 
@@ -684,16 +672,17 @@ pub mod g1 {
             }
 
             Ok(G1Affine {
-                x: Fq::from_raw_repr(x).map_err(|e| {
-                    GroupDecodingError::CoordinateDecodingError("x coordinate", e)
-                })?,
-                y: Fq::from_raw_repr(y).map_err(|e| {
-                    GroupDecodingError::CoordinateDecodingError("y coordinate", e)
-                })?,
+                x: Fq::from_raw_repr(x)
+                    .map_err(|e| GroupDecodingError::CoordinateDecodingError("x coordinate", e))?,
+                y: Fq::from_raw_repr(y)
+                    .map_err(|e| GroupDecodingError::CoordinateDecodingError("y coordinate", e))?,
             })
         }
 
-        fn from_raw_uncompressed_le(encoded: &Self::Uncompressed, _infinity: bool) -> Result<Self, GroupDecodingError> {
+        fn from_raw_uncompressed_le(
+            encoded: &Self::Uncompressed,
+            _infinity: bool,
+        ) -> Result<Self, GroupDecodingError> {
             let affine = Self::from_raw_uncompressed_le_unchecked(&encoded, _infinity)?;
 
             if !affine.is_on_curve() {
@@ -1067,10 +1056,10 @@ pub mod g1 {
 pub mod g2 {
     use super::super::{Bn256, Fq, Fq12, Fq2, FqRepr, Fr, FrRepr};
     use super::g1::G1Affine;
+    use crate::{CurveAffine, CurveProjective, EncodedPoint, Engine, GroupDecodingError};
     use ff::{BitIterator, Field, PrimeField, PrimeFieldRepr, SqrtField};
     use rand::{Rand, Rng};
     use std::fmt;
-    use crate::{CurveAffine, CurveProjective, EncodedPoint, Engine, GroupDecodingError};
 
     curve_impl!(
         "G2",
@@ -1168,7 +1157,6 @@ pub mod g2 {
                     Err(GroupDecodingError::UnexpectedInformation)
                 }
             } else {
-
                 // Unset the two most significant bits.
                 copy[0] &= 0x3f;
 
@@ -1260,7 +1248,7 @@ pub mod g2 {
             let affine = self.into_affine_unchecked()?;
 
             // NB: Decompression guarantees that it is on the curve already.
-            
+
             Ok(affine)
         }
         fn into_affine_unchecked(&self) -> Result<G2Affine, GroupDecodingError> {
@@ -1439,7 +1427,6 @@ pub mod g2 {
                     y: if y < negy { y } else { negy },
                 };
 
-
                 let g2 = p.into_projective();
                 if !g2.is_zero() {
                     assert_eq!(i, 0);
@@ -1561,7 +1548,6 @@ pub mod g2 {
 
     #[test]
     fn test_addition_and_doubling() {
-    
         let mut rng = XorShiftRng::from_seed([0x5dbe6259, 0x8d313d76, 0x3237db17, 0xe5bc0654]);
 
         for _ in 0..1000 {
@@ -1645,7 +1631,6 @@ pub mod g2 {
                 assert!(b != tmp[i]);
                 assert!(c != tmp[i]);
             }
- 
         }
     }
 
@@ -1709,7 +1694,6 @@ pub mod g2 {
             assert!(t.is_zero());
         }
     }
-
 }
 
 pub use self::g1::*;

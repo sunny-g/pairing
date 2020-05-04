@@ -8,16 +8,21 @@ pub struct Fr(FrRepr);
 #[test]
 fn test_to_hex() {
     use ff::to_hex;
-    assert_eq!(to_hex(&Fr::one()), "0000000000000000000000000000000000000000000000000000000000000001");
+    assert_eq!(
+        to_hex(&Fr::one()),
+        "0000000000000000000000000000000000000000000000000000000000000001"
+    );
 }
 
 #[test]
 fn test_fr_from_hex() {
     use ff::from_hex;
-    let fr: Fr = from_hex("0000000000000000000000000000000000000000000000000000000000000001").unwrap();
+    let fr: Fr =
+        from_hex("0000000000000000000000000000000000000000000000000000000000000001").unwrap();
     assert_eq!(fr, Fr::one());
 
-    let fr: Fr = from_hex("0x0000000000000000000000000000000000000000000000000000000000000001").unwrap();
+    let fr: Fr =
+        from_hex("0x0000000000000000000000000000000000000000000000000000000000000001").unwrap();
     assert_eq!(fr, Fr::one());
 
     let fr: Fr = from_hex("0x01").unwrap();
